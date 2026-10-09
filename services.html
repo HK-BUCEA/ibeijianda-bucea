@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>办事事项｜建大圈</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo">建</div>
+      <div class="brand-text">
+        <h1>建大圈</h1>
+        <p>北京建筑大学大兴校区 · 15分钟生活圈服务平台</p>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <a href="index.html">生活地图</a>
+      <a href="circle.html">生活圈体检</a>
+      <a href="recommend.html">为你推荐</a>
+      <a href="services.html" class="active">办事事项</a>
+      <a href="optimize.html">优化方案</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
+  </header>
+
+  <main class="page-main">
+    <section class="page-intro">
+      <h2>全周期办事导办</h2>
+      <p>从入学报到、在校学习到就业创业、医疗健康和家庭服务，一次告知事项、责任部门、所需材料与办理入口。</p>
+    </section>
+
+    <section class="role-bar">
+      <button class="role-btn active" data-role="student">在校学生</button>
+      <button class="role-btn" data-role="staff">教职工</button>
+    </section>
+
+    <section class="service-tabs" id="serviceTabs"></section>
+    <section class="service-list" id="serviceList"></section>
+  </main>
+
+  <footer class="app-footer">
+    <p>事项信息为作品示例，具体办理要求以学校官方通知和实际窗口为准。</p>
+  </footer>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/services-data.js"></script>
+  <script src="assets/js/services.js"></script>
+</body>
+</html>

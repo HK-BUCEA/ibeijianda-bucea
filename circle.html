@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生活圈体检｜建大圈</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo">建</div>
+      <div class="brand-text">
+        <h1>建大圈</h1>
+        <p>北京建筑大学大兴校区 · 15分钟生活圈服务平台</p>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <a href="index.html">生活地图</a>
+      <a href="circle.html" class="active">生活圈体检</a>
+      <a href="recommend.html">为你推荐</a>
+      <a href="services.html">办事事项</a>
+      <a href="optimize.html">优化方案</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
+  </header>
+
+  <main class="page-main">
+    <section class="page-intro">
+      <h2>生活圈体检报告</h2>
+      <p>以真实步行路网初值为基础，从覆盖率、缺口类型、人群差异三个维度评价北建大大兴校区及周边生活圈。</p>
+    </section>
+
+    <section class="stat-cards" id="statCards"></section>
+
+    <section class="chart-grid">
+      <div class="chart-card">
+        <h3>各圈层设施覆盖情况</h3>
+        <div id="chartCircle" class="chart"></div>
+      </div>
+      <div class="chart-card">
+        <h3>重点设施类别覆盖达标率</h3>
+        <div id="chartCategory" class="chart"></div>
+      </div>
+      <div class="chart-card">
+        <h3>人群服务差异</h3>
+        <div id="chartGroup" class="chart"></div>
+      </div>
+      <div class="chart-card">
+        <h3>主要缺口分布</h3>
+        <div id="chartGap" class="chart"></div>
+      </div>
+    </section>
+
+    <section class="gap-list" id="gapList"></section>
+  </main>
+
+  <footer class="app-footer">
+    <p>数据来源：高德地图开放平台、校园公开信息及实地核验。指标为示例计算结果，正式提交前需用真实路网与实测数据校准。</p>
+  </footer>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/poi.js"></script>
+  <script src="assets/js/chart.js"></script>
+  <script src="assets/js/circle.js"></script>
+</body>
+</html>

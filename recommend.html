@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>为你推荐｜建大圈</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo">建</div>
+      <div class="brand-text">
+        <h1>建大圈</h1>
+        <p>北京建筑大学大兴校区 · 15分钟生活圈服务平台</p>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <a href="index.html">生活地图</a>
+      <a href="circle.html">生活圈体检</a>
+      <a href="recommend.html" class="active">为你推荐</a>
+      <a href="services.html">办事事项</a>
+      <a href="optimize.html">优化方案</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
+  </header>
+
+  <main class="page-main">
+    <section class="page-intro">
+      <h2>个性化生活服务推荐</h2>
+      <p>根据身份标签、设施类型偏好和步行距离，为师生推荐最匹配的生活设施。</p>
+    </section>
+
+    <section class="role-bar" id="roleBar">
+      <p>请选择你的身份：</p>
+      <button class="role-btn active" data-role="student">在校学生</button>
+      <button class="role-btn" data-role="staff">教职工</button>
+    </section>
+
+    <section class="recommend-layout">
+      <div class="rec-list" id="recList"></div>
+      <div class="rec-map">
+        <div id="recMap"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>推荐结果为规则引擎计算，非实时个性化广告。推荐权重可根据师生问卷反馈持续调整。</p>
+  </footer>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/poi.js"></script>
+  <script src="assets/js/recommend.js"></script>
+  <script src="assets/js/recommend-page.js"></script>
+</body>
+</html>

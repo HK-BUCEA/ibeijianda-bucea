@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>建大圈 · 前端自检页</title>
+<style>
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;padding:24px;background:#f8fafc;color:#1f2937}
+  h1{font-size:20px;margin-bottom:6px}
+  .tip{font-size:13px;color:#6b7280;margin-bottom:18px}
+  .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px 18px;margin-bottom:14px}
+  .row{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:14px;border-bottom:1px dashed #f1f1f1}
+  .row:last-child{border-bottom:0}
+  .ok{color:#059669;font-weight:700}
+  .bad{color:#dc2626;font-weight:700}
+  .warn{color:#d97706;font-weight:700}
+  code{background:#f1f5f9;padding:1px 6px;border-radius:5px;font-size:12.5px}
+  button{margin:6px 4px 0 0;padding:8px 14px;border-radius:9px;background:#2563eb;color:#fff;font-size:13px;border:0}
+  button.ghost{background:#f1f5f9;color:#374151}
+  pre{background:#0f172a;color:#e2e8f0;padding:14px;border-radius:10px;overflow:auto;font-size:12px;max-height:300px}
+</style>
+</head>
+<body>
+<h1>建大圈 · 前端加载自检</h1>
+<p class="tip">用 Live Server 打开本页。全部显示 ✅ 后再去改 index.html。</p>
+
+<div class="card">
+  <h3 style="margin-bottom:10px">① 文件是否被正确加载</h3>
+  <div id="fileCheck"></div>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:10px">② 关键对象是否存在</h3>
+  <div id="objCheck"></div>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:10px">③  campus.json 能否 fetch 到</h3>
+  <div id="jsonCheck">检测中…</div>
+  <button onclick="tryFetch()">重新测试 fetch</button>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:10px">④ 定位测试（导航依赖此项）</h3>
+  <div id="geoCheck">未测试</div>
+  <button onclick="tryGeo()">请求定位</button>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:10px">⑤ 控制台错误（F12 → Console）</h3>
+  <pre id="errBox">暂无捕获</pre>
+</div>
+
+<script>
+// 捕获未处理错误
+window.addEventListener("error", e => {
+  document.getElementById("errBox").textContent =
+    e.message + "\n  位置：" + (e.filename || "").split("/").pop() + ":" + e.lineno;
+});
+window.addEventListener("unhandledrejection", e => {
+  document.getElementById("errBox").textContent = "Promise 异常：" + e.reason;
+});
+
+/* ========== ① 文件加载检查 ========== */
+const files = [
+  "assets/js/config.js",
+  "assets/js/map.js",
+  "assets/js/campus-search.js",
+  "assets/js/poi.js",
+  "assets/js/main.js",
+  "assets/data/campus.json"
+];
+
+(async () => {
+  const box = document.getElementById("fileCheck");
+  let html = "";
+  for (const f of files) {
+    try {
+      const res = await fetch(f, { method: "HEAD", cache: "no-store" });
+      const status = res.ok ? "✅" : "❌ " + res.status;
+      html += `<div class="row"><span style="width:26px">${status}</span><code>${f}</code></div>`;
+    } catch (err) {
+      html += `<div class="row"><span class="bad">❌ 跨域/路径错</span><code>${f}</code></div>`;
+    }
+  }
+  box.innerHTML = html;
+})();
+
+/* ========== ② 对象检查 ========== */
+setTimeout(() => {
+  const checks = [
+    ["CONFIG.amapKey",            () => !!CONFIG && !!CONFIG.amapKey && CONFIG.amapKey.length > 10],
+    ["CONFIG.campus",             () => !!CONFIG && !!CONFIG.campus],
+    ["window.AMapLoader",         () => typeof window.AMapLoader === "function"],
+    ["window.AMap（地图API）",     () => typeof window.AMap === "function" || typeof window.AMap === "object" && !!window.AMap.Map],
+    ["window.map",                () => !!window.map && typeof window.map.setZoom === "function"],
+    ["window.POI_DATA",           () => Array.isArray(window.POI_DATA)],
+    ["CAMPUS_DATA",               () => Array.isArray(window.CAMPUS_DATA) && window.CAMPUS_DATA.length > 0],
+    ["CampusSearch.init",         () => window.CampusSearch && typeof window.CampusSearch.init === "function"],
+    ["CampusSearch._search",      () => window.CampusSearch && typeof window.CampusSearch._search === "function"],
+    ["initMap 返回 Promise",      () => typeof initMap === "function" && initMap().then ? true : false],
+    ["drawWalkingCircles",        () => typeof drawWalkingCircles === "function"],
+    ["renderMarkers",             () => typeof renderMarkers === "function"],
+    ["state（筛选状态）",          () => typeof state === "object" && Array.isArray(state.minutes)]
+  ];
+
+  let html = "";
+  for (const [name, fn] of checks) {
+    let ok = false;
+    try { ok = fn(); } catch (e) { ok = false; }
+    const cls = ok ? "ok" : "bad";
+    const txt = ok ? "✅ 存在" : "❌ 缺失或未执行";
+    html += `<div class="row"><span class="${cls}">${txt}</span><span>${name}</span></div>`;
+  }
+  document.getElementById("objCheck").innerHTML = html;
+}, 1500);
+
+/* ========== ③ fetch 测试 ========== */
+async function tryFetch() {
+  const box = document.getElementById("jsonCheck");
+  box.textContent = "请求中…";
+  try {
+    const res = await fetch("assets/data/campus.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    box.innerHTML = `<span class="ok">✅ 成功</span> 读取到 <b>${data.length}</b> 条校内建筑。`;
+  } catch (err) {
+    box.innerHTML = `<span class="bad">❌ 失败</span> ${err.message}<br>
+      <span style="font-size:12px;color:#6b7280">
+      → 若提示 Failed to fetch / CORS：说明仍在 <code>file://</code> 打开，请用 VS Code Live Server。<br>
+      → 若提示 404：路径应为 <code>assets/data/campus.json</code>。
+      </span>`;
+  }
+}
+tryFetch();
+
+/* ========== ④ 定位测试 ========== */
+function tryGeo() {
+  const box = document.getElementById("geoCheck");
+  if (!("geolocation" in navigator)) {
+    box.innerHTML = `<span class="warn">⚠️ 当前环境不支持 geolocation</span>`;
+    return;
+  }
+  box.textContent = "请求中，请允许浏览器定位…";
+  navigator.geolocation.getCurrentPosition(
+    p => {
+      box.innerHTML = `<span class="ok">✅ 定位成功</span> 纬度 ${p.coords.latitude.toFixed(5)}，经度 ${p.coords.longitude.toFixed(5)}，精度 ${Math.round(p.coords.accuracy)} 米`;
+    },
+    e => {
+      const map = {
+        1: "用户拒绝了定位权限（页面将以校园中心为虚拟起点）",
+        2: "设备无法获取位置（无GPS/无网络定位）",
+        3: "定位超时（建议用 https 或 localhost 重试）",
+        4: "其他原因"
+      };
+      box.innerHTML = `<span class="warn">⚠️ ${map[e.code] || e.message}</span>
+        <br><span style="font-size:12px;color:#6b7280">不影响页面运行，但“步行导航”将显示示例距离。</span>`;
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+</script>
+</body>
+</html>

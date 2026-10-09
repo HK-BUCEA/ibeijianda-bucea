@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>优化方案｜建大圈</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo">建</div>
+      <div class="brand-text">
+        <h1>建大圈</h1>
+        <p>北京建筑大学大兴校区 · 15分钟生活圈服务平台</p>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <a href="index.html">生活地图</a>
+      <a href="circle.html">生活圈体检</a>
+      <a href="recommend.html">为你推荐</a>
+      <a href="services.html">办事事项</a>
+      <a href="optimize.html" class="active">优化方案</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
+  </header>
+
+  <main class="page-main">
+    <section class="page-intro">
+      <h2>生活圈优化方案</h2>
+      <p>从缺口区域识别、候选点评价和分期建设三个环节，形成“找短板—选点位—看效果”的闭环。</p>
+    </section>
+
+    <section class="optimize-summary" id="optimizeSummary"></section>
+
+    <section class="chart-grid">
+      <div class="chart-card wide">
+        <h3>优化前后综合覆盖率对比</h3>
+        <div id="chartBeforeAfter" class="chart"></div>
+      </div>
+      <div class="chart-card">
+        <h3>补建设施类型优先级</h3>
+        <div id="chartPriority" class="chart"></div>
+      </div>
+    </section>
+
+    <section class="candidate-table" id="candidateTable"></section>
+  </main>
+
+  <footer class="app-footer">
+    <p>优化点位与建设规模为作品研究建议，最终落地需结合校园规划、权属与消防等实际条件。</p>
+  </footer>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/poi.js"></script>
+  <script src="assets/js/optimize-data.js"></script>
+  <script src="assets/js/chart.js"></script>
+  <script src="assets/js/optimize.js"></script>
+</body>
+</html>

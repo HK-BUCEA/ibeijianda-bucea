@@ -1,0 +1,501 @@
+/*
+ * ============================================================================
+ * style.css —— 建大圈 15分钟生活圈服务平台 样式表
+ *
+ * 【本次新增章节】
+ *   §9  校内建筑搜索下拉面板
+ *   §10 红色高亮标记
+ *
+ * 插入位置：本文件【末尾】。
+ * 插入方式：直接追加，不要插入到其它规则中间，避免被后续规则覆盖。
+ *
+ * 若已有同名选择器（如 .search-box），按以下规则合并，而非重复定义：
+ *   - 布局类（position/width/height/flex）     → 保留原有，补新增
+ *   - 颜色类（color/background/border-color）  → 以新值为准
+ *   - z-index                                   → 取较大值
+ * ============================================================================
+ */
+
+/* ================= §1 基础与变量 ================= */
+
+:root{
+  --primary:#2563eb;
+  --primary-dark:#1e40af;
+  --green:#2ecc71;
+  --orange:#f39c12;
+  --red:#e74c3c;
+  --ink:#1f2937;
+  --gray:#6b7280;
+  --line:#e5e7eb;
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --shadow:0 6px 24px rgba(15,23,42,.08);
+  --radius:14px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+ul{list-style:none}
+
+/* ================= §2 布局 ================= */
+
+.app-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;background:var(--card);
+  border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 10px rgba(15,23,42,.04);
+}
+
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,#2563eb,#1e3a8a);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:800;letter-spacing:-1px;
+}
+.brand-text h1{font-size:19px;letter-spacing:.5px}
+.brand-text p{font-size:11px;color:var(--gray)}
+
+.main-nav{display:flex;gap:6px}
+.main-nav a{
+  padding:8px 14px;border-radius:10px;font-size:14px;color:var(--gray);
+  transition:.18s;white-space:nowrap;
+}
+.main-nav a:hover{background:#f1f5f9;color:var(--primary)}
+.main-nav a.active{background:var(--primary);color:#fff;font-weight:600}
+
+.menu-toggle{display:none;font-size:24px;color:var(--gray)}
+
+.home-main{display:flex;flex-direction:column;height:calc(100vh - 65px - 52px)}
+
+/* ================= §3 工具栏 ================= */
+
+.toolbar{
+  padding:14px 20px;background:var(--card);
+  border-bottom:1px solid var(--line);
+  display:flex;flex-direction:column;gap:12px;
+}
+
+.search-box{
+  display:flex;gap:8px;max-width:640px;width:100%;margin:0 auto;
+  position:relative;   /* ★ 新增：作为下拉面板的定位基准 */
+}
+
+.search-box input{
+  flex:1;padding:11px 16px;border:1.5px solid var(--line);
+  border-radius:12px;font-size:14px;outline:none;
+  transition:border-color .18s,box-shadow .18s;
+}
+.search-box input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(37,99,235,.14);
+}
+.search-box button{
+  padding:0 20px;border-radius:12px;background:var(--primary);
+  color:#fff;font-weight:600;font-size:14px;
+  transition:background .18s;
+}
+.search-box button:hover{background:var(--primary-dark)}
+
+/* §9 下拉面板：z-index 1000，压过地图控件与 POI 标记 */
+.search-dropdown{
+  position:absolute;top:100%;left:0;right:0;z-index:1000;
+  background:#fff;border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 14px 40px rgba(15,23,42,.18);
+  margin-top:8px;max-height:440px;overflow-y:auto;
+  animation:dropIn .16s ease-out;
+}
+.search-dropdown.hidden{display:none}
+
+@keyframes dropIn{
+  from{opacity:0;transform:translateY(-8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.dropdown-view{display:none;padding:12px}
+.dropdown-view.active{display:block}
+
+/* 分类宫格：4列，末行左对齐 */
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cat-card{
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  padding:15px 6px;border-radius:11px;cursor:pointer;
+  border:1px solid transparent;transition:all .16s;
+}
+.cat-card:hover{background:#f0f7ff;border-color:#c7ddf5;transform:translateY(-1px)}
+.cat-card .ico{font-size:27px;line-height:1}
+.cat-card .nm{font-size:13px;color:var(--ink);font-weight:500}
+.cat-card .cnt{
+  font-size:11px;color:#9ca3af;
+  background:#f3f4f6;padding:1px 8px;border-radius:20px;
+}
+
+/* 子类与建筑列表 */
+.sub-list,.building-list{display:flex;flex-direction:column;gap:5px}
+.sub-item,.building-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 13px;border-radius:9px;cursor:pointer;
+  transition:background .14s;
+}
+.sub-item:hover,.building-item:hover{background:#f3f4f6}
+.sub-item{font-size:14px;color:var(--ink)}
+.sub-item .badge{
+  font-size:11px;background:#eef2ff;color:#4f46e5;
+  padding:2px 9px;border-radius:20px;font-weight:600;
+}
+.building-item .nm{font-size:14px;font-weight:500}
+.building-item .meta{font-size:12px;color:var(--gray);margin-top:2px}
+.building-item .go{color:var(--primary);font-size:13px;font-weight:600}
+
+/* 返回头：data-back 属性由 JS 读取，决定回退到哪一级 */
+.dropdown-header{
+  display:flex;align-items:center;gap:9px;
+  padding:10px 13px;border-bottom:1px solid #f1f1f1;
+  font-size:13px;color:#4f46e5;cursor:pointer;font-weight:600;
+}
+.dropdown-header .back{font-weight:800;font-size:17px;line-height:1}
+.dropdown-header:hover{background:#fafbff}
+
+.empty-hint{padding:26px;text-align:center;color:#9ca3af;font-size:13px}
+
+.filter-row{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+
+.category-filter{display:flex;gap:7px;flex-wrap:wrap}
+.cat-btn{
+  padding:6px 13px;border-radius:20px;font-size:13px;
+  background:#f1f5f9;color:var(--gray);transition:all .16s;
+  border:1px solid transparent;
+}
+.cat-btn:hover{background:#e2e8f0}
+.cat-btn.active{
+  background:#eff6ff;color:var(--primary);
+  border-color:#bfdbfe;font-weight:600;
+}
+
+.circle-control{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--gray)}
+.circle-control label{display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none}
+.circle-control input{accent-color:var(--primary);width:15px;height:15px}
+
+.ghost-btn{
+  padding:6px 14px;border-radius:10px;border:1px solid var(--line);
+  font-size:13px;color:var(--gray);transition:all .16s;
+}
+.ghost-btn:hover{border-color:var(--primary);color:var(--primary)}
+
+/* ================= §4 地图区 ================= */
+
+.map-area{
+  flex:1;display:flex;min-height:0;
+}
+#map{
+  flex:1;height:100%;
+  /* 防止 flex 子项被内容撑高导致地图高度为 0 */
+  min-height:420px;
+}
+/* 高德地图容器必须显式高度，仅写 height:100% 而父级无高度时会坍缩为一条线 */
+.amap-maps{height:100% !important}
+
+/* §10 红色高亮标记：z-index 999，压过 POI 蓝标 */
+.campus-marker-red{font-size:13px;font-weight:700;color:#e53935;z-index:999 !important}
+.campus-marker-red b{
+  background:#fff;padding:1px 7px;border-radius:6px;
+  box-shadow:0 2px 8px rgba(229,57,53,.3);
+  border:1px solid #fecaca;
+}
+
+.detail-panel{
+  width:340px;flex-shrink:0;overflow-y:auto;
+  background:var(--card);border-left:1px solid var(--line);
+  padding:20px;
+}
+.empty-tip h2{font-size:17px;margin-bottom:8px}
+.empty-tip p{font-size:13px;color:var(--gray)}
+.legend{margin-top:18px;display:flex;flex-direction:column;gap:9px;font-size:13px}
+.legend .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:8px}
+
+.poi-detail h2{font-size:18px;margin-bottom:10px}
+.poi-detail .tag{
+  display:inline-block;padding:2px 9px;border-radius:6px;
+  background:#eff6ff;color:#1d4ed8;font-size:12px;margin:0 4px 8px 0;
+}
+.poi-detail p{font-size:13.5px;margin:7px 0;color:#374151}
+.poi-detail button{
+  margin-top:14px;width:100%;padding:10px;border-radius:10px;
+  background:var(--primary);color:#fff;font-weight:600;font-size:14px;
+}
+.poi-detail button:hover{background:var(--primary-dark)}
+
+/* ================= §5 通用卡片 ================= */
+
+.page-wrap{max-width:1180px;margin:0 auto;padding:26px 20px 60px}
+.page-title{font-size:25px;margin-bottom:6px}
+.page-sub{color:var(--gray);font-size:14px;margin-bottom:22px}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.kpi{
+  background:var(--card);border-radius:var(--radius);
+  padding:18px 20px;box-shadow:var(--shadow);
+  border-left:4px solid var(--primary);
+}
+.kpi .num{font-size:29px;font-weight:800;line-height:1.1}
+.kpi .lbl{font-size:13px;color:var(--gray);margin-top:5px}
+
+.card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.card{
+  background:var(--card);border-radius:var(--radius);
+  padding:20px;box-shadow:var(--shadow);
+}
+.card h3{font-size:16px;margin-bottom:12px}
+.card.full{grid-column:1 / -1}
+
+.chart{width:100%;height:300px}
+
+.gap-list{display:flex;flex-direction:column;gap:11px}
+.gap-item{
+  display:flex;align-items:center;gap:12px;padding:11px 13px;
+  border-radius:10px;background:#f8fafc;border:1px solid var(--line);
+}
+.gap-item .rank{
+  width:26px;height:26px;border-radius:8px;flex-shrink:0;
+  background:#fee2e2;color:#b91c1c;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;
+}
+.gap-item .info{flex:1;min-width:0}
+.gap-item .info b{font-size:14px;display:block}
+.gap-item .info span{font-size:12px;color:var(--gray)}
+.gap-item .fix{
+  font-size:12px;padding:5px 11px;border-radius:8px;
+  background:#eff6ff;color:#1d4ed8;font-weight:600;white-space:nowrap;
+}
+
+/* ================= §6 推荐页 ================= */
+
+.identity-switch{
+  display:flex;gap:10px;justify-content:center;margin-bottom:22px;
+}
+.identity-switch button{
+  padding:11px 26px;border-radius:12px;font-size:15px;font-weight:600;
+  background:#f1f5f9;color:var(--gray);transition:all .18s;
+}
+.identity-switch button.active{background:var(--primary);color:#fff;box-shadow:0 6px 18px rgba(37,99,235,.28)}
+
+.rec-layout{display:grid;grid-template-columns:400px 1fr;gap:18px;height:calc(100vh - 200px);min-height:500px}
+.rec-list{overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.rec-card{
+  background:var(--card);border-radius:var(--radius);padding:15px 17px;
+  box-shadow:var(--shadow);cursor:pointer;transition:all .16s;
+  border:1.5px solid transparent;
+}
+.rec-card:hover{transform:translateY(-2px);border-color:#bfdbfe}
+.rec-card.active{border-color:var(--primary);box-shadow:0 8px 26px rgba(37,99,235,.18)}
+.rec-card .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.rec-card .top b{font-size:15px}
+.rec-card .top .score{
+  font-size:12px;font-weight:700;color:#fff;background:#10b981;
+  padding:2px 8px;border-radius:20px;flex-shrink:0;
+}
+.rec-card .meta{font-size:12.5px;color:var(--gray);margin-top:7px}
+.rec-card .reason{font-size:12.5px;color:#1d4ed8;margin-top:8px;background:#eff6ff;padding:6px 9px;border-radius:7px}
+
+/* ================= §7 事项库 ================= */
+
+.service-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.service-tabs button{
+  padding:8px 15px;border-radius:10px;font-size:13.5px;
+  background:#f1f5f9;color:var(--gray);transition:all .16s;
+}
+.service-tabs button.active{background:var(--primary);color:#fff;font-weight:600}
+
+.service-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.service-card{
+  background:var(--card);border-radius:var(--radius);padding:18px;
+  box-shadow:var(--shadow);border-top:3px solid var(--primary);
+}
+.service-card h4{font-size:15px;margin-bottom:9px}
+.service-card .row{font-size:13px;color:#4b5563;margin:6px 0;display:flex;gap:7px}
+.service-card .row b{color:var(--ink);flex-shrink:0;width:62px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:11px}
+.chip{
+  font-size:11.5px;padding:3px 9px;border-radius:20px;
+  background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;
+}
+.chip.blue{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.chip.orange{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+
+/* ================= §8 响应式 ================= */
+
+@media (max-width:900px){
+  .main-nav{
+    position:fixed;inset:0;top:65px;flex-direction:column;
+    background:#fff;padding:20px;transform:translateX(-100%);
+    transition:transform .24s;z-index:99;
+  }
+  .main-nav.open{transform:translateX(0)}
+  .menu-toggle{display:block}
+  .detail-panel{display:none}
+  .home-main{height:calc(100vh - 65px)}
+  .cat-grid{grid-template-columns:repeat(3,1fr)}
+  .card-grid,.service-grid{grid-template-columns:1fr}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .rec-layout{grid-template-columns:1fr;height:auto}
+}/* =========================================================
+   §9  校内建筑搜索下拉面板
+   追加到 style.css 末尾。不要插入到文件中部，
+   否则可能被后续同权重规则覆盖（CSS 层叠：后定义者优先）。
+   ========================================================= */
+
+/* 定位基准：必须 relative，否则下拉会相对 body 漂到页面左上角 */
+.search-box { position: relative; }
+
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, .16);
+  margin-top: 6px;
+  max-height: 440px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.search-dropdown.hidden { display: none; }
+.dropdown-view { display: none; padding: 12px; }
+.dropdown-view.active { display: block; }
+
+/* 分类宫格：7 类，4 列自适应 */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.cat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .15s, border-color .15s, transform .15s;
+  user-select: none;
+}
+.cat-card:hover {
+  background: #f0f7ff;
+  border-color: #c7ddf5;
+  transform: translateY(-1px);
+}
+.cat-card:active { transform: translateY(0); }
+.cat-card .ico { font-size: 26px; line-height: 1; }
+.cat-card .nm { font-size: 13px; color: #1f2937; font-weight: 500; }
+.cat-card .cnt { font-size: 11px; color: #9ca3af; }
+
+/* 二级：子类 */
+.sub-list, .building-list { display: flex; flex-direction: column; gap: 6px; }
+.sub-item, .building-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .12s;
+}
+.sub-item:hover, .building-item:hover { background: #f3f4f6; }
+.sub-item .badge {
+  font-size: 11px;
+  background: #eef2ff;
+  color: #4f46e5;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.building-item .nm { font-size: 14px; color: #111827; font-weight: 500; }
+.building-item .meta { font-size: 12px; color: #6b7280; margin-top: 2px; }
+.building-item .go { color: #2563eb; font-size: 13px; font-weight: 600; }
+
+/* 返回头 */
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 13px;
+  color: #4f46e5;
+  cursor: pointer;
+  font-weight: 500;
+}
+.dropdown-header .back {
+  font-weight: 700;
+  font-size: 18px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 6px;
+  background: #eef2ff;
+}
+.dropdown-header:hover { background: #f8fafc; }
+.empty-hint {
+  padding: 26px 16px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+/* 校内建筑详情面板 */
+.campus-detail .detail-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.campus-detail .red-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e53935;
+  box-shadow: 0 0 0 4px rgba(229, 57, 53, .18);
+}
+.campus-detail .detail-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.campus-detail .detail-actions button {
+  flex: 1;
+}
+
+/* =========================================================
+   §10  红色高亮标记（压过 POI 默认蓝标）
+   z-index 必须高于地图标注层，否则会被底图覆盖。
+   ========================================================= */
+.campus-marker-red { z-index: 999 !important; }
+.amap-marker-label {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* 保证地图容器有高度：flex:1 若无明确高度会坍缩成一条线 */
+#map {
+  flex: 1;
+  height: 100%;
+  min-height: 420px;
+}
+.amap-maps { height: 100% !important; }

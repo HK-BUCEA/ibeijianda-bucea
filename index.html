@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>建大圈｜北建大大兴校区15分钟生活圈服务平台</title>
+  <meta name="description" content="北京建筑大学大兴校区15分钟校园生活圈服务平台，提供生活地图、生活圈体检、个性化推荐、办事导办和优化方案。">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!--
+    ⚠ 注意：<head> 内不要放业务脚本。
+    原版本在此加载了 config/map/main，会导致：
+      1. DOM 尚未解析，getElementById("map") 为 null
+      2. config.js 被加载两次，CONFIG 被覆盖
+    所有脚本统一放在 </body> 前，且顺序严格如下。
+  -->
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo">建</div>
+      <div class="brand-text">
+        <h1>建大圈</h1>
+        <p>北京建筑大学大兴校区 · 15分钟生活圈服务平台</p>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <a href="index.html" class="active">生活地图</a>
+      <a href="circle.html">生活圈体检</a>
+      <a href="recommend.html">为你推荐</a>
+      <a href="services.html">办事事项</a>
+      <a href="optimize.html">优化方案</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
+  </header>
+
+  <main class="home-main">
+    <section class="toolbar">
+      <!--
+        ★ 搜索框：必须整段使用，不得只改 placeholder。
+        5 个 id 是 campus-search.js 的 DOM 挂钩：
+          searchDropdown / categoryView / subCategoryView / buildingView / keywordResults
+        改名或删除任一，会导致"点搜索框无反应"（且不报错）。
+      -->
+      <div class="search-box">
+        <input id="searchInput" type="search"
+               placeholder="搜索 基A、基B、基C、基D、图书馆、医务室、操场…"
+               autocomplete="off" spellcheck="false">
+        <button id="searchBtn">搜索</button>
+
+        <div id="searchDropdown" class="search-dropdown hidden">
+          <div id="categoryView" class="dropdown-view active"></div>
+          <div id="subCategoryView" class="dropdown-view"></div>
+          <div id="buildingView" class="dropdown-view"></div>
+          <div id="keywordResults" class="dropdown-view"></div>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <div class="category-filter" id="categoryFilter"></div>
+        <div class="circle-control">
+          <span class="control-label">步行圈：</span>
+          <label><input type="checkbox" data-minutes="5" checked>5分钟</label>
+          <label><input type="checkbox" data-minutes="10" checked>10分钟</label>
+          <label><input type="checkbox" data-minutes="15" checked>15分钟</label>
+        </div>
+        <button id="resetBtn" class="ghost-btn">重置</button>
+      </div>
+    </section>
+
+    <section class="map-area">
+      <div id="map"></div>
+      <aside class="detail-panel" id="detailPanel">
+        <div class="empty-tip">
+          <h2>北建大大兴校区</h2>
+          <p>点击地图上的设施图标查看详情；<b>点开搜索框选择校内建筑</b>，将以红色标记高亮并规划步行路线。</p>
+          <ul class="legend">
+            <li><span class="dot" style="background:#2ecc71"></span>5分钟圈（示意）</li>
+            <li><span class="dot" style="background:#f39c12"></span>10分钟圈（示意）</li>
+            <li><span class="dot" style="background:#e74c3c"></span>15分钟圈（示意）</li>
+            <li><span class="dot" style="background:#e53935;border-radius:50%"></span>选中的校内建筑</li>
+          </ul>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>数据来源：高德地图开放平台、校园公开信息及实地核验。步行圈为基于路网初值的示意范围，实际时间以现场导航为准。校内建筑坐标与楼层为示例值，须实地校准。</p>
+  </footer>
+
+  <!--
+    ★ 脚本加载顺序（不可调换）：
+      1. config.js      定义 CONFIG、CATEGORIES，配置高德 Key
+      2. loader.js      高德 JSAPI 加载器（必须走 AMapLoader，直引 maps?v= 会报 SECURITY_KEY_REQUIRED）
+      3. map.js         初始化地图，对外暴露 initMap / drawWalkingCircles / highlightBuilding / planWalkRoute / focusOn
+      4. campus-search.js  三级级联搜索、红色高亮、步行导航（依赖 window.map 与 window.AMap，须在 map.js 之后）
+      5. poi.js         周边 POI 数据，导出 window.POI_DATA
+      6. main.js        筛选状态、事件绑定、启动顺序控制
+  -->
+  <script src="assets/js/config.js"></script>
+  <script src="https://webapi.amap.com/loader.js"></script>
+  <script src="assets/js/map.js"></script>
+  <script src="assets/js/campus-search.js"></script>
+  <script src="assets/js/poi.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
